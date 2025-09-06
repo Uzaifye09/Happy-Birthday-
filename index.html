@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Wishes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear infinite;
+        }
+        
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+        
+        .wish-card {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .balloon {
+            position: absolute;
+            width: 80px;
+            height: 100px;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        .balloon::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background-color: #333;
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%);
+        }
+        
+        .birthday-banner {
+            background: linear-gradient(45deg, #ff6b6b, #ffd166, #06d6a0, #118ab2);
+            background-size: 300% 300%;
+            animation: gradient 5s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-pink-100 via-purple-100 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-md py-4 px-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-purple-600 flex items-center">
+                <i class="fas fa-birthday-cake mr-2 text-pink-500"></i>
+                Birthday Wishes
+            </h1>
+            <div class="flex items-center space-x-4">
+                <div id="userSection" class="hidden">
+                    <span id="userName" class="text-gray-600 mr-2"></span>
+                    <button id="logoutBtn" class="text-sm text-purple-600 hover:text-purple-800">
+                        <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                    </button>
+                </div>
+                <div id="authSection">
+                    <button id="loginBtn" class="text-purple-600 hover:text-purple-800 mr-2">
+                        <i class="fas fa-sign-in-alt mr-1"></i>Login
+                    </button>
+                    <button id="registerBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition duration-300">
+                        <i class="fas fa-user-plus mr-1"></i>Register
+                    </button>
+                </div>
+                <button id="showFormBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition duration-300">
+                    <i class="fas fa-plus mr-2"></i>Add Wish
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- Birthday Banner (shown on user's birthday) -->
+    <section id="birthdayBanner" class="hidden birthday-banner text-white p-6 shadow-lg">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-2">Happy Birthday, <span id="birthdayUserName"></span>!</h2>
+            <p class="text-xl">Wishing you a fantastic day filled with joy and celebration!</p>
+        </div>
+    </section>
+    <!-- Main Content -->
+    <main class="container mx-auto py-8 px-4">
+        <!-- Birthday Banner -->
+        <section class="text-center mb-12 relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 text-white p-8 shadow-xl">
+            <div class="relative z-10">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">Happy Birthday!</h2>
+                <p class="text-xl mb-6">Send your heartfelt wishes and make someone's day special</p>
+                <div class="flex justify-center space-x-4">
+                    <div class="balloon bg-red-400" style="left: 20%; top: 20px;"></div>
+                    <div class="balloon bg-yellow-400" style="left: 40%; top: 10px;"></div>
+                    <div class="balloon bg-green-400" style="left: 60%; top: 30px;"></div>
+                    <div class="balloon bg-blue-400" style="left: 80%; top: 15px;"></div>
+                </div>
+            </div>
+        </section>
+        <!-- Auth Forms -->
+        <section id="authForms" class="hidden bg-white rounded-2xl shadow-xl p-6 mb-12">
+            <div class="flex justify-center mb-6">
+                <button id="showLoginTab" class="px-4 py-2 font-medium text-purple-600 border-b-2 border-purple-600 focus:outline-none">
+                    Login
+                </button>
+                <button id="showRegisterTab" class="px-4 py-2 font-medium text-gray-500 hover:text-gray-700 focus:outline-none">
+                    Register
+                </button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Login to Your Account</h3>
+                <form id="loginFormElement" class="space-y-4">
+                    <div>
+                        <label for="loginEmail" class="block text-gray-700 mb-2">Email</label>
+                        <input type="email" id="loginEmail" name="email" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label for="loginPassword" class="block text-gray-700 mb-2">Password</label>
+                        <input type="password" id="loginPassword" name="password" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" id="cancelAuthBtn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-300">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="registerForm" class="hidden">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Create a New Account</h3>
+                <form id="registerFormElement" class="space-y-4">
+                    <div>
+                        <label for="registerName" class="block text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="registerName" name="name" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label for="registerEmail" class="block text-gray-700 mb-2">Email</label>
+                        <input type="email" id="registerEmail" name="email" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label for="registerPassword" class="block text-gray-700 mb-2">Password</label>
+                        <input type="password" id="registerPassword" name="password" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    
+                    <div>
+                        <label for="registerBirthday" class="block text-gray-700 mb-2">Your Birthday</label>
+                        <input type="date" id="registerBirthday" name="birthday" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" id="cancelAuthBtn2" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-300">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300">
+                            <i class="fas fa-user-plus mr-2"></i>Register
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <!-- Wish Form -->
+        <section id="wishForm" class="bg-white rounded-2xl shadow-xl p-6 mb-12 hidden">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Send a Birthday Wish</h3>
+            <form id="birthdayWishForm" class="space-y-4">
+                <div>
+                    <label for="senderName" class="block text-gray-700 mb-2">Your Name</label>
+                    <input type="text" id="senderName" name="senderName" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div>
+                    <label for="recipientName" class="block text-gray-700 mb-2">Birthday Person's Name</label>
+                    <input type="text" id="recipientName" name="recipientName" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div>
+                    <label for="email" class="block text-gray-700 mb-2">Your Email (Optional)</label>
+                    <input type="email" id="email" name="email" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                
+                <div>
+                    <label for="message" class="block text-gray-700 mb-2">Your Birthday Message</label>
+                    <textarea id="message" name="message" rows="4" required 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancelBtn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-300">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition duration-300">
+                        <i class="fas fa-paper-plane mr-2"></i>Send Wish
+                    </button>
+                </div>
+            </form>
+        </section>
+        <!-- Success Message -->
+        <div id="successMessage" class="hidden bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle mr-2"></i>
+                <p id="successText">Your action was successful!</p>
+            </div>
+        </div>
+        <!-- Connection Error Message -->
+        <div id="connectionError" class="hidden bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <p id="connectionErrorText">Failed to connect to the server. Please check your internet connection and try again.</p>
+                </div>
+                <button id="retryConnectionBtn" class="ml-4 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300">
+                    Retry
+                </button>
+            </div>
+        </div>
+        <!-- Wishes Display -->
+        <section>
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">Birthday Wishes</h3>
+            <div id="wishesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Wishes will be loaded here -->
+            </div>
+            <div id="loadingIndicator" class="text-center py-8">
+                <i class="fas fa-spinner fa-spin text-3xl text-purple-600"></i>
+                <p class="mt-2 text-gray-600">Loading birthday wishes...</p>
+            </div>
+            <div id="noWishes" class="hidden text-center py-8">
+                <i class="fas fa-birthday-cake text-5xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">No birthday wishes yet. Be the first to send one!</p>
+            </div>
+        </section>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>© 2023 Birthday Wishes. Made with <i class="fas fa-heart text-red-500"></i> for special celebrations.</p>
+        </div>
+    </footer>
+    <script>
+        // IMPORTANT: Replace this with your actual Google Apps Script URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_XSyuOoP6hA2-pe1st5TRuJCjd1pWFCH4gXCtsjlAkLIE_u56xa7VtTsjt5s_k2wZ/exec';
+        
+        // DOM elements
+        const showFormBtn = document.getElementById('showFormBtn');
+        const wishForm = document.getElementById('wishForm');
+        const birthdayWishForm = document.getElementById('birthdayWishForm');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+        const wishesContainer = document.getElementById('wishesContainer');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const noWishes = document.getElementById('noWishes');
+        const connectionError = document.getElementById('connectionError');
+        const connectionErrorText = document.getElementById('connectionErrorText');
+        const retryConnectionBtn = document.getElementById('retryConnectionBtn');
+        
+        // Auth elements
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const authForms = document.getElementById('authForms');
+        const showLoginTab = document.getElementById('showLoginTab');
+        const showRegisterTab = document.getElementById('showRegisterTab');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loginFormElement = document.getElementById('loginFormElement');
+        const registerFormElement = document.getElementById('registerFormElement');
+        const cancelAuthBtn = document.getElementById('cancelAuthBtn');
+        const cancelAuthBtn2 = document.getElementById('cancelAuthBtn2');
+        const userSection = document.getElementById('userSection');
+        const authSection = document.getElementById('authSection');
+        const userName = document.getElementById('userName');
+        const logoutBtn = document.getElementById('logoutBtn');
+        
+        // Birthday banner
+        const birthdayBanner = document.getElementById('birthdayBanner');
+        const birthdayUserName = document.getElementById('birthdayUserName');
+        
+        // User state
+        let currentUser = null;
+        let connectionAttempts = 0;
+        const MAX_CONNECTION_ATTEMPTS = 3;
+        
+        // Helper function for API requests with retry logic
+        async function apiRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API request failed:', error);
+                throw error;
+            }
+        }
+        
+        // Test connection with retries
+        async function testConnection() {
+            connectionAttempts++;
+            try {
+                const testResult = await apiRequest(`${SCRIPT_URL}?action=test`);
+                console.log('Connection test:', testResult);
+                
+                if (testResult.status === 'success') {
+                    // Reset connection attempts on success
+                    connectionAttempts = 0;
+                    connectionError.classList.add('hidden');
+                    
+                    // Show success message if backend is running
+                    successText.textContent = 'Google Sheet backend is running successfully!';
+                    successMessage.classList.remove('hidden');
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMessage.classList.add('hidden');
+                    }, 5000);
+                    
+                    return true;
+                }
+            } catch (error) {
+                console.error('Connection test failed:', error);
+                
+                if (connectionAttempts < MAX_CONNECTION_ATTEMPTS) {
+                    // Retry after delay
+                    setTimeout(testConnection, 2000);
+                } else {
+                    // Show error message after max attempts
+                    connectionError.classList.remove('hidden');
+                    connectionErrorText.textContent = 'Failed to connect to the server. Please check your internet connection and try again.';
+                    loadingIndicator.classList.add('hidden');
+                    noWishes.classList.remove('hidden');
+                }
+            }
+            return false;
+        }
+        
+        // Initialize the app
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Test the connection
+            await testConnection();
+            
+            // Continue with other initializations
+            checkUserLogin();
+            loadWishes();
+            
+            // Create confetti occasionally
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    createConfetti();
+                }
+            }, 10000);
+        });
+        
+        // Retry connection button
+        retryConnectionBtn.addEventListener('click', async () => {
+            connectionAttempts = 0;
+            loadingIndicator.classList.remove('hidden');
+            noWishes.classList.add('hidden');
+            await testConnection();
+            loadWishes();
+        });
+        
+        // Check if user is logged in (from localStorage)
+        function checkUserLogin() {
+            const savedUser = localStorage.getItem('birthdayUser');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    updateUserInterface();
+                    checkUserBirthday();
+                } catch (e) {
+                    localStorage.removeItem('birthdayUser');
+                }
+            }
+        }
+        
+        // Update UI based on login state
+        function updateUserInterface() {
+            if (currentUser) {
+                userSection.classList.remove('hidden');
+                authSection.classList.add('hidden');
+                userName.textContent = currentUser.name;
+                
+                // Pre-fill wish form if user is logged in
+                document.getElementById('senderName').value = currentUser.name;
+                document.getElementById('email').value = currentUser.email;
+            } else {
+                userSection.classList.add('hidden');
+                authSection.classList.remove('hidden');
+            }
+        }
+        
+        // Check if today is user's birthday
+        function checkUserBirthday() {
+            if (!currentUser || !currentUser.birthday) return;
+            
+            const today = new Date();
+            const birthday = new Date(currentUser.birthday);
+            
+            // Check if month and day match
+            if (today.getMonth() === birthday.getMonth() && today.getDate() === birthday.getDate()) {
+                birthdayBanner.classList.remove('hidden');
+                birthdayUserName.textContent = currentUser.name;
+                
+                // Create extra confetti for birthday
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => createConfetti(), i * 1000);
+                }
+            }
+        }
+        
+        // Show/hide form
+        showFormBtn.addEventListener('click', () => {
+            wishForm.classList.remove('hidden');
+            wishForm.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            wishForm.classList.add('hidden');
+            birthdayWishForm.reset();
+            if (currentUser) {
+                document.getElementById('senderName').value = currentUser.name;
+                document.getElementById('email').value = currentUser.email;
+            }
+        });
+        
+        // Auth form handlers
+        loginBtn.addEventListener('click', () => {
+            authForms.classList.remove('hidden');
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            showLoginTab.classList.add('text-purple-600', 'border-b-2', 'border-purple-600');
+            showLoginTab.classList.remove('text-gray-500');
+            showRegisterTab.classList.remove('text-purple-600', 'border-b-2', 'border-purple-600');
+            showRegisterTab.classList.add('text-gray-500');
+            authForms.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        registerBtn.addEventListener('click', () => {
+            authForms.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            showRegisterTab.classList.add('text-purple-600', 'border-b-2', 'border-purple-600');
+            showRegisterTab.classList.remove('text-gray-500');
+            showLoginTab.classList.remove('text-purple-600', 'border-b-2', 'border-purple-600');
+            showLoginTab.classList.add('text-gray-500');
+            authForms.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        showLoginTab.addEventListener('click', () => {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            showLoginTab.classList.add('text-purple-600', 'border-b-2', 'border-purple-600');
+            showLoginTab.classList.remove('text-gray-500');
+            showRegisterTab.classList.remove('text-purple-600', 'border-b-2', 'border-purple-600');
+            showRegisterTab.classList.add('text-gray-500');
+        });
+        
+        showRegisterTab.addEventListener('click', () => {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            showRegisterTab.classList.add('text-purple-600', 'border-b-2', 'border-purple-600');
+            showRegisterTab.classList.remove('text-gray-500');
+            showLoginTab.classList.remove('text-purple-600', 'border-b-2', 'border-purple-600');
+            showLoginTab.classList.add('text-gray-500');
+        });
+        
+        cancelAuthBtn.addEventListener('click', () => {
+            authForms.classList.add('hidden');
+            loginFormElement.reset();
+            registerFormElement.reset();
+        });
+        
+        cancelAuthBtn2.addEventListener('click', () => {
+            authForms.classList.add('hidden');
+            loginFormElement.reset();
+            registerFormElement.reset();
+        });
+        
+        // Handle login form submission
+        loginFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(loginFormElement);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+            
+            // Show loading state
+            const submitBtn = loginFormElement.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Logging in...';
+            submitBtn.disabled = true;
+            
+            try {
+                const result = await apiRequest(`${SCRIPT_URL}?action=login`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                
+                if (result.status === 'success') {
+                    // Save user data
+                    currentUser = result.user;
+                    localStorage.setItem('birthdayUser', JSON.stringify(currentUser));
+                    
+                    // Update UI
+                    updateUserInterface();
+                    checkUserBirthday();
+                    
+                    // Show success message
+                    successText.textContent = 'Login successful! Welcome back.';
+                    successMessage.classList.remove('hidden');
+                    successMessage.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Hide auth form
+                    authForms.classList.add('hidden');
+                    
+                    // Pre-fill wish form
+                    document.getElementById('senderName').value = currentUser.name;
+                    document.getElementById('email').value = currentUser.email;
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMessage.classList.add('hidden');
+                    }, 5000);
+                } else {
+                    throw new Error(result.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                connectionError.classList.remove('hidden');
+                connectionErrorText.textContent = 'Login failed. Please check your connection and try again.';
+            } finally {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Handle registration form submission
+        registerFormElement.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(registerFormElement);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                birthday: formData.get('birthday')
+            };
+            
+            // Show loading state
+            const submitBtn = registerFormElement.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating Account...';
+            submitBtn.disabled = true;
+            
+            try {
+                const result = await apiRequest(`${SCRIPT_URL}?action=register`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                
+                if (result.status === 'success') {
+                    // Save user data
+                    currentUser = result.user;
+                    localStorage.setItem('birthdayUser', JSON.stringify(currentUser));
+                    
+                    // Update UI
+                    updateUserInterface();
+                    checkUserBirthday();
+                    
+                    // Show success message
+                    successText.textContent = 'Registration successful! Welcome to Birthday Wishes.';
+                    successMessage.classList.remove('hidden');
+                    successMessage.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Hide auth form
+                    authForms.classList.add('hidden');
+                    
+                    // Pre-fill wish form
+                    document.getElementById('senderName').value = currentUser.name;
+                    document.getElementById('email').value = currentUser.email;
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMessage.classList.add('hidden');
+                    }, 5000);
+                } else {
+                    throw new Error(result.message || 'Registration failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                connectionError.classList.remove('hidden');
+                connectionErrorText.textContent = 'Registration failed. Please check your connection and try again.';
+            } finally {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Handle logout
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('birthdayUser');
+            currentUser = null;
+            updateUserInterface();
+            birthdayBanner.classList.add('hidden');
+            birthdayWishForm.reset();
+            
+            // Show success message
+            successText.textContent = 'You have been logged out successfully.';
+            successMessage.classList.remove('hidden');
+            successMessage.scrollIntoView({ behavior: 'smooth' });
+            
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+            }, 5000);
+        });
+        
+        // Handle form submission
+        birthdayWishForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(birthdayWishForm);
+            const data = {
+                name: formData.get('senderName'),
+                recipient: formData.get('recipientName'),
+                email: formData.get('email'),
+                message: formData.get('message'),
+                userId: currentUser ? currentUser.userId : null
+            };
+            
+            // Show loading state
+            const submitBtn = birthdayWishForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+            submitBtn.disabled = true;
+            
+            try {
+                const result = await apiRequest(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                
+                if (result.status === 'success') {
+                    // Show success message
+                    successText.textContent = 'Your birthday wish has been sent successfully!';
+                    successMessage.classList.remove('hidden');
+                    successMessage.scrollIntoView({ behavior: 'smooth' });
+                    
+                    // Reset form
+                    birthdayWishForm.reset();
+                    if (currentUser) {
+                        document.getElementById('senderName').value = currentUser.name;
+                        document.getElementById('email').value = currentUser.email;
+                    }
+                    wishForm.classList.add('hidden');
+                    
+                    // Reload wishes
+                    loadWishes();
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMessage.classList.add('hidden');
+                    }, 5000);
+                } else {
+                    throw new Error(result.message || 'Something went wrong');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                connectionError.classList.remove('hidden');
+                connectionErrorText.textContent = 'Failed to send your wish. Please check your connection and try again.';
+            } finally {
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Load wishes from Google Sheets
+        async function loadWishes() {
+            loadingIndicator.classList.remove('hidden');
+            noWishes.classList.add('hidden');
+            
+            try {
+                const data = await apiRequest(`${SCRIPT_URL}?action=getWishes`);
+                loadingIndicator.classList.add('hidden');
+                
+                if (data.wishes && data.wishes.length > 0) {
+                    displayWishes(data.wishes);
+                } else {
+                    noWishes.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading wishes:', error);
+                loadingIndicator.classList.add('hidden');
+                noWishes.classList.remove('hidden');
+            }
+        }
+        
+        // Display wishes
+        function displayWishes(wishes) {
+            wishesContainer.innerHTML = '';
+            
+            // Sort wishes by timestamp (newest first)
+            wishes.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            wishes.forEach(wish => {
+                const wishCard = document.createElement('div');
+                wishCard.className = 'wish-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300';
+                
+                const date = new Date(wish.timestamp);
+                const formattedDate = date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                wishCard.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-800">To: ${wish.recipient}</h4>
+                                <p class="text-sm text-gray-500">From: ${wish.name}</p>
+                            </div>
+                            <div class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                                ${formattedDate}
+                            </div>
+                        </div>
+                        <p class="text-gray-600 mb-4">${wish.message}</p>
+                        <div class="flex justify-end">
+                            <i class="fas fa-birthday-cake text-pink-500"></i>
+                        </div>
+                    </div>
+                `;
+                
+                wishesContainer.appendChild(wishCard);
+            });
+        }
+        
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800', '#ff5722'];
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = `${Math.random() * 100}%`;
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.opacity = Math.random();
+                    confetti.style.transform = `scale(${Math.random() * 0.8 + 0.2})`;
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 30);
+            }
+        }
+    </script>
+</body>
+</html>
