@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Birthday Notification WebApp</title>
+  <title>Birthday Notifier</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -27,7 +27,7 @@
     <!-- Hero -->
     <section class="text-center mb-12 bg-gradient-to-r from-purple-500 to-pink-500 text-white p-8 rounded-xl shadow-lg">
       <h2 class="text-4xl md:text-5xl font-extrabold mb-3">🎉 Never Miss a Birthday 🎉</h2>
-      <p class="text-lg md:text-xl opacity-90">Register and get instant birthday notifications!</p>
+      <p class="text-lg md:text-xl opacity-90">Register now and get instant birthday greetings!</p>
     </section>
 
     <!-- Forms -->
@@ -40,7 +40,7 @@
         <input type="email" id="rEmail" placeholder="Email" class="w-full p-3 border rounded focus:ring focus:ring-purple-300" required>
         <input type="password" id="rPass" placeholder="Password" class="w-full p-3 border rounded focus:ring focus:ring-purple-300" required>
         <input type="date" id="rBday" class="w-full p-3 border rounded focus:ring focus:ring-purple-300" required>
-        <input type="tel" id="rPhone" placeholder="Phone" class="w-full p-3 border rounded focus:ring focus:ring-purple-300">
+        <input type="tel" id="rPhone" placeholder="Phone (optional)" class="w-full p-3 border rounded focus:ring focus:ring-purple-300">
         <button class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">Register</button>
       </form>
 
@@ -63,15 +63,15 @@
 
   <!-- Footer -->
   <footer class="bg-gray-800 text-white text-center py-4">
-    <p>© 2024 Birthday Notifier 🎂. Powered by Google Sheets + Apps Script.</p>
+    <p>© 2024 Birthday Notifier 🎂. Powered by PHP + MySQL.</p>
   </footer>
 
   <!-- JS -->
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznqx7ih91EkX_an-YY1EXT8yGwH1tn71VAo-M0-VLnGvXvF8_DnSNvh3zv7c4CXCQ-/exec"; // replace with Apps Script WebApp URL
+    const SCRIPT_URL = "https://uzmabirthdaywhish.great-site.net/api.php"; // your live PHP API
     let currentUser = null;
 
-    // API request helper with error handling
+    // API request helper
     async function apiRequest(data) {
       try {
         const res = await fetch(SCRIPT_URL, {
@@ -168,7 +168,7 @@
           "🎉 Happy Birthday " + currentUser.name + "! 🎂 Enjoy your special day!";
       } else {
         document.getElementById("birthdayMessage").textContent =
-          "No birthday today. We'll remind you when it's your big day!";
+          "No birthday today. We'll remind you on your special day!";
       }
     }
 
